@@ -8,4 +8,4 @@ spec:
   name: kubernetes-imagepuller-operator
   source: community-operators
   sourceNamespace: openshift-marketplace
-  startingCSV: kubernetes-imagepuller-operator.v1.0.4
+  # startingCSV: kubernetes-imagepuller-operator.v1.0.4
