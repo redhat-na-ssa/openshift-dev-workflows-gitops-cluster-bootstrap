@@ -4,6 +4,25 @@ This project contains a set of ArgoCD manifests used to bootstrap a Openshift Cl
 
 It uses the ArgoCD App of Apps pattern to pre-install and configure a set of Openshift Operators to support Developer Workflows.
 
+# Openshift GitOps installation
+You can choose to install **Openshift GitOps** Operator manually from the Operator Hub in the Openshift Console (Administrator Perspective) or you can
+
+ 1. Authenticate as a `cluster-admin` on your cluster
+```
+oc apply -f ./openshift-gitops-install/operator.yaml
+oc apply -f ./openshift-gitops-install/argocd.yaml
+```
+
+ 2. Apply additional `ClusterRoleBindings` to ArgoCD Controller Service Accounts
+```
+oc apply -f ./openshift-gitops-install/rbac.yaml
+```
+
+ 3. **IMPORTANT**: Make your cluster admin(s) ArgoCD Admins
+```
+oc adm groups new cluster-admins <your admin username here>
+```
+
 ## Openshift DevSpaces configs
 
 ```
