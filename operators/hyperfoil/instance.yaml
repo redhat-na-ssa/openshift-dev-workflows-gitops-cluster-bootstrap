@@ -1,0 +1,7 @@
+apiVersion: hyperfoil.io/v1alpha2
+kind: Hyperfoil
+metadata:
+  name: hyperfoil-controller
+  namespace: hyperfoil
+spec:
+  version: latest
