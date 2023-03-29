@@ -19,7 +19,7 @@ spec:
     readOnly: true
   ingress:
     annotations: {}
-    enabled: false
+    enabled: true
     path: /
     tls:
       enabled: true
