@@ -2,7 +2,7 @@ kind: NexusRepo
 apiVersion: sonatype.com/v1alpha1
 metadata:
   name: nexusrepo
-  namespace: openshift-operators
+  namespace: sonatype-nexus
 spec:
   config:
     data: null
@@ -39,10 +39,10 @@ spec:
       - name: NEXUS_SECURITY_RANDOMPASSWORD
         value: 'false'
     hostAliases: []
-    # imageName: >-
-    #   registry.connect.redhat.com/sonatype/nexus-repository-manager@sha256:0a537bf191cc09fec0787300c7b4de7713afcb00f62774b7a4e5578be6b6ff0e
-    # imagePullPolicy: IfNotPresent
-    # imagePullSecret: ''
+    imageName: >-
+      registry.connect.redhat.com/sonatype/nexus-repository-manager
+    imagePullPolicy: IfNotPresent
+    imagePullSecret: ''
     readinessProbe:
       failureThreshold: 6
       initialDelaySeconds: 60
