@@ -13,7 +13,7 @@ spec:
     maxNumberOfWorkspacesPerUser: 5
     maxNumberOfRunningWorkspacesPerUser: 2
     storage:
-      pvcStrategy: per-user
+      pvcStrategy: per-workspace
   components:
     cheServer:
       debug: false
