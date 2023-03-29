@@ -14,10 +14,10 @@ spec:
   source:
     repoURL: {{ .Values.gitRepo.URL }}
     targetRevision: {{ .Values.gitRepo.targetRevision }}
-    path: operators/sonatype-nexus
+    path: operators/sonatype-nexus/instance
     directory:
       # include: instance.yaml
-      include: '{instance.yaml, rout*.yaml}'
+      include: '*.yaml'
   destination:
     server: https://kubernetes.default.svc
     namespace: sonatype-nexus
