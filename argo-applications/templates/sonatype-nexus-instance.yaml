@@ -17,7 +17,7 @@ spec:
     path: operators/sonatype-nexus
     directory:
       # include: instance.yaml
-      include: 'instance.yaml, route.yaml'
+      include: '{instance.yaml, rout*.yaml}'
   destination:
     server: https://kubernetes.default.svc
     namespace: sonatype-nexus
