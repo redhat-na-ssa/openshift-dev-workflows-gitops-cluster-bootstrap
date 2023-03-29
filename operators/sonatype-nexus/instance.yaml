@@ -76,12 +76,12 @@ spec:
     enabled: true
     storageSize: 8Gi
   replicaCount: 1
-  route:
-    annotations: null
-    enabled: true
-    labels: null
-    name: nexus
-    portName: application
+  # route:
+  #   annotations: null
+  #   enabled: true
+  #   labels: null
+  #   name: nexus
+  #   portName: application
   secret:
     data: null
     enabled: false
