@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: sonatype-nexus-instance
+  name: nexus-instance
   namespace: openshift-gitops
   labels:
     {{- include "argo-applications.labels" . | nindent 4 }} 
