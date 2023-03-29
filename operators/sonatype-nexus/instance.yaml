@@ -2,6 +2,7 @@ apiVersion: sonatype.com/v1alpha1
 kind: NexusRepo
 metadata:
   name: nexusrepo
+  namespace: sonatype-nexus
 spec:
   config:
     enabled: false
