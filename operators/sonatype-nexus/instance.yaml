@@ -1,62 +1,48 @@
-apiVersion: sonatype.com/v1alpha1
 kind: NexusRepo
+apiVersion: sonatype.com/v1alpha1
 metadata:
   name: nexusrepo
-  namespace: sonatype-nexus
+  namespace: openshift-operators
 spec:
   config:
+    data: null
     enabled: false
     mountPath: /sonatype-nexus-conf
   deployment:
+    additionalContainers: null
+    additionalVolumeMounts: null
+    additionalVolumes: null
     annotations: {}
+    initContainers: null
+    postStart:
+      command: null
+    preStart:
+      command: null
     terminationGracePeriodSeconds: 120
-  route:
-    enabled: 
-    name: nexus
-    portName: application
-    path: /
-  secret:
-    enabled: false
-    mountPath: /etc/secret-volume
-    readOnly: true
+  deploymentStrategy:
+    type: Recreate
   ingress:
     annotations: {}
-    enabled: true
+    enabled: false
     path: /
+    rules: null
     tls:
       enabled: true
       secretName: nexus-tls
-  service:
-    annotations: {}
-    enabled: false
-    labels: {}
-    ports:
-      - name: nexus-service
-        port: 80
-        targetPort: 80
-  statefulset:
-    enabled: false
-  replicaCount: 1
-  deploymentStrategy: {}
-  nexusProxyRoute:
-    enabled: false
-  tolerations: []
-  persistence:
-    accessMode: ReadWriteOnce
-    enabled: true
-    storageSize: 10Gi
   nexus:
-    nexusPort: 8081
     dockerPort: 5003
-    resources: 
-      requests:
-        memory: "4Gi"
-        cpu: "1000m"
-      limits:
-        memory: "6Gi"
-        cpu: "4000m"    
+    env:
+      - name: INSTALL4J_ADD_VM_PARAMS
+        value: >-
+          -Xms2703M -Xmx2703M -XX:MaxDirectMemorySize=2703M
+          -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+      - name: NEXUS_SECURITY_RANDOMPASSWORD
+        value: 'false'
+    hostAliases: []
     # imageName: >-
-    #   registry.connect.redhat.com/sonatype/nexus-repository-manager
+    #   registry.connect.redhat.com/sonatype/nexus-repository-manager@sha256:0a537bf191cc09fec0787300c7b4de7713afcb00f62774b7a4e5578be6b6ff0e
+    # imagePullPolicy: IfNotPresent
+    # imagePullSecret: ''
     readinessProbe:
       failureThreshold: 6
       initialDelaySeconds: 60
@@ -69,17 +55,46 @@ spec:
       timeoutSeconds: 3
       path: /service/rest/v1/status
       periodSeconds: 60
-    env:
-      - name: install4jAddVmParams
-        value: >-
-          -Xms2G -Xmx2G -XX:MaxDirectMemorySize=2G
-          -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
-      - name: NEXUS_SECURITY_RANDOMPASSWORD
-        value: 'false'
+    nexusPort: 8081
+    podAnnotations: {}
+    resources:
+      requests:
+        memory: "4Gi"
+        cpu: "1000m"
+      limits:
+        memory: "6Gi"
+        cpu: "2000m"
     securityContext: {}
-    imagePullSecret: ''
-    imagePullPolicy: IfNotPresent
     service:
       type: NodePort
-    hostAliases: []
-    podAnnotations: {}
+  nexusProxyRoute:
+    annotations: null
+    enabled: false
+    labels: null
+  persistence:
+    accessMode: ReadWriteOnce
+    enabled: true
+    storageSize: 8Gi
+  replicaCount: 1
+  route:
+    annotations: null
+    enabled: true
+    labels: null
+    name: nexus
+    portName: application
+  secret:
+    data: null
+    enabled: false
+    mountPath: /etc/secret-volume
+    readOnly: true
+  service:
+    annotations: {}
+    enabled: false
+    labels: {}
+    ports:
+      - name: nexus-service
+        port: 80
+        targetPort: 80
+  statefulset:
+    enabled: false
+  tolerations: []
