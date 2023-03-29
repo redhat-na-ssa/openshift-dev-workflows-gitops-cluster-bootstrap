@@ -11,9 +11,10 @@ spec:
     annotations: {}
     terminationGracePeriodSeconds: 120
   route:
-    enabled: false
-    name: docker
-    portName: docker
+    enabled: 
+    name: nexus
+    portName: application
+    path: /
   secret:
     enabled: false
     mountPath: /etc/secret-volume
@@ -82,9 +83,3 @@ spec:
       type: NodePort
     hostAliases: []
     podAnnotations: {}
-# route.enabled	Set to true to create route for additional service	false
-# route.name	Name of route	docker
-# route.portName	Target port name of service	docker
-# route.labels	Labels to be added to route	{}
-# route.annotations	Annotations to be added to route	{}
-# route.path	Host name of Route e.g jenkins.example.com	nil
