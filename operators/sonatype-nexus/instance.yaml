@@ -54,8 +54,8 @@ spec:
       limits:
         memory: "6Gi"
         cpu: "4000m"    
-    imageName: >-
-      registry.connect.redhat.com/sonatype/nexus-repository-manager
+    # imageName: >-
+    #   registry.connect.redhat.com/sonatype/nexus-repository-manager
     readinessProbe:
       failureThreshold: 6
       initialDelaySeconds: 60
