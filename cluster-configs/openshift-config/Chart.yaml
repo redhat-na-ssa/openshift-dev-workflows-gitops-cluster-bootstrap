@@ -1,6 +1,6 @@
 apiVersion: v2
 name: openshift-config
-description: A Helm chart for setting some basic opensihtf configurations
+description: A Helm chart for setting some basic openshift configurations
 
 # A chart can be either an 'application' or a 'library' chart.
 #
