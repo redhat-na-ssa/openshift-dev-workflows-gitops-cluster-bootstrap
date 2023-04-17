@@ -65,7 +65,7 @@ spec:
       # - Golang text template syntax: https://pkg.go.dev/text/template
       # ---
       patchTemplate: |
-        {{ "{{-" }} $demoIdp:= dict "name" "demo-github" "mappingMethod" "claim" "type" "GitHub" "github" (dict "teams" (list) "clientID" ((index . 1).data.client_id | b64dec) "clientSecret" (dict "name" "ocp-github-app-credentials") "organizations" (list ((index . 1).data.orgs | b64dec)) ) {{ "-}}" }}
+        {{ "{{-" }} $demoIdp:= dict "name" "github" "mappingMethod" "claim" "type" "GitHub" "github" (dict "teams" (list) "clientID" ((index . 1).data.client_id | b64dec) "clientSecret" (dict "name" "ocp-github-app-credentials") "organizations" (list ((index . 1).data.orgs | b64dec)) ) {{ "-}}" }}
         spec:
           identityProviders:
           {{ "{{-" }} if (not (has $demoIdp (index . 0).spec.identityProviders)) {{ "}}" }}
