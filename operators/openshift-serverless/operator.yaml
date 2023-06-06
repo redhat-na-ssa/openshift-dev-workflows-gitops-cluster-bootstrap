@@ -15,8 +15,10 @@ spec:
 apiVersion: operators.coreos.com/v1
 kind: OperatorGroup
 metadata:
-  generateName: openshift-serverless-
-  # name: openshift-serverless-7lhpm
+  annotations:
+    olm.providedAPIs: >-
+      KnativeEventing.v1beta1.operator.knative.dev,KnativeKafka.v1alpha1.operator.serverless.openshift.io,KnativeServing.v1beta1.operator.knative.dev
+  name: openshift-serverless-b5gcp
   namespace: openshift-serverless
 spec:
   upgradeStrategy: Default
