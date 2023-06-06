@@ -1,77 +1,109 @@
 # Openshift Gitops Cluster Bootstrap
 
-This project contains a set of ArgoCD manifests used to bootstrap a Openshift Cluster v4.x intended for Developer workflows demo.
+This project repo contains a set of ArgoCD manifests used to bootstrap a Openshift Cluster v4.x using GitOps approach. The produced environment is intended for Developer workflows demo.
 
-It uses the ArgoCD App of Apps pattern to pre-install and configure a set of Openshift Operators to support Developer Workflows.
+It uses the ArgoCD **App of Apps pattern** to pre-install and configure a set of Openshift Operators to support Developer Workflows.
+
+The following components should be provisioned by ArgoCD in your cluster:
+
+ * **Openshift Pipelines**
+ * **Container Security Operator**
+ * **Crunchy Postgres Operator**
+ * **Openshift Devspaces**
+ * **Hyperfoil.io Load Driver Operator**
+ * **Kubernetes Image Puller Operator**
+ * **Openshift Serverless (Knative Serving)**
+ * **Patch Operator**
+ * **Service Binding Operator (SBO)**
+ * **Sonatype Nexus**
+ * **...** (this list keeps growing as I need to add new components to my demos)
+
+# First things first
+If you got a "naked cluster" with just the `kubeadmin` system user. You can start by enabling the `htpasswd` auth provider and creating the `admin` user by using the `bootstrap-scripts/enable-htpasswd-users.sh`. 
+
+This script will create the `admin` user as `cluster-admin` and 5 other regular (non-admin) users.
 
 # Openshift GitOps installation
-You can choose to install **Openshift GitOps** Operator manually from the Operator Hub in the Openshift Console (Administrator Perspective) or you can
+You can choose to install **Openshift GitOps** Operator manually from the Operator Hub using the Openshift Console (Administrator Perspective) or you can
 
  1. Authenticate as a `cluster-admin` on your cluster
-```
+
+```shell
 oc apply -f ./openshift-gitops-install/operator.yaml
+
 #wait until the Gitops operators is ready
 oc wait pods -n openshift-operators -l control-plane=controller-manager --for condition=Ready
 oc create -f ./openshift-gitops-install/argocd.yaml
 ```
 
  2. Apply additional `ClusterRoleBindings` to ArgoCD Controller Service Accounts
-```
+
+```shell
 oc apply -f ./openshift-gitops-install/rbac.yaml
 ```
 
- 3. **IMPORTANT**: Make your cluster admin(s) ArgoCD Admins
-```
+> **IMPORTANT**: Make your cluster admin(s) ArgoCD Admins (already done if you use the `bootstrap-scripts/enable-htpasswd-users.sh`)
+```shell
 oc adm groups new cluster-admins <your admin username here>
 ```
 
-### Manual steps
-
-This demo is based on GitHub. Create an github org that you'll use with this demo and add a couple of teams.
-It requires some manual preparation steps for tasks that do not seem automate-able on GitHub (at least i was no able to automate them).
-
-1. create a new organization or reuse an existing one.
-2. create an Oauth app (under 'Developer Settings') in this organization for OpenShift Dev Spaces. The call back url should be `https://devspaces.apps.${base_domain}/api/oauth/callback`
-3. create an Oauth app in this organization for OpenShift. The call back url should be `https://oauth-openshift.apps.${base_domain}/oauth2callback/github`
-4. create a Personal Access Token (PAT) with an account that is administrator to the chosen organization.
-
-Create a client secret for each of the OAuth apps.
-
-Create a file called `secrets.sh` and store it at the top of this repo, it will be ignored by Git.
+## Bootstrapping the components provisioning though Openshift GitOps (ArgoCD)
+After installing Openshift GitOps you can go ahead and create the **Argo Apps of Apps** using
 
 ```shell
-export github_organization=<org_name>
-
-export devspaces_github_client_id=<devspaces_oauth_app_id>
-export devspaces_github_client_secret=<devspaces_oauth_app_secret>
-
-export ocp_github_client_id=<ocp_oauth_app_id>
-export ocp_github_client_secret=<ocp_oauth_app_secret>
-export org_admin_pat=<pat token>
+oc apply -f root-app/app-of-apps.yaml
 ```
 
-now you can source the file and populate the environment variables any time:
+After applying this manifest go to the ArgoCD web console and watch the provisioning.
+> **IMPORTANT**: It will take a while to have all components provisioned and in healthy state. The provisioning happens in "waves". You may have to refresh od sync come apps in case they remain in unhealthy state.
 
-```shell
-source ./secrets.sh
-```
+![ArgoCD Root App tree](./docs/images/ArgoCD-root-app-tree.png)
 
-Run the following commands to populate the Kubernetes secrets with the previously generated values (this is fine for a demo, it might not be fine for a production environment):
+# Enabling Github oAuth provider
+I use this repo to bootstrap an Openshift Cluster to showcase Openshift Dev Tooling and Developer workflows on top of Openshift Platform.
+For this I like to integrate Openshift and Openshift DevSpaces with Github. 
 
-```shell
-oc create namespace openshift-devspaces
-oc create secret generic github-oauth-config --from-literal=id=${devspaces_github_client_id} --from-literal=secret=${devspaces_github_client_secret} -n openshift-devspaces
-oc label secret github-oauth-config -n openshift-devspaces --overwrite=true app.kubernetes.io/part-of=che.eclipse.org app.kubernetes.io/component=oauth-scm-configuration
-oc annotate secret github-oauth-config -n openshift-devspaces --overwrite=true che.eclipse.org/oauth-scm-server=github
-oc create secret generic ocp-github-app-credentials -n openshift-config --from-literal=client_id=${ocp_github_client_id} --from-literal=clientSecret=${ocp_github_client_secret} --from-literal=orgs=${github_organization}
-```
+To enable github users to authenticate on Openshift and DevSpaces using their Github accounts you need to configure Github oAuth. 
 
-## Openshift DevSpaces configs
+## Enabling Github users (developers) to access Openshift
 
-```
-oc create namespace openshift-devspaces
-oc create secret generic github-oauth-config --from-literal=id=${devspaces_github_client_id} --from-literal=secret=${devspaces_github_client_secret} -n openshift-devspaces
-oc label secret github-oauth-config -n openshift-devspaces --overwrite=true app.kubernetes.io/part-of=che.eclipse.org app.kubernetes.io/component=oauth-scm-configuration
-oc annotate secret github-oauth-config -n openshift-devspaces --overwrite=true che.eclipse.org/oauth-scm-server=github
-oc create secret generic ocp-github-app-credentials -n openshift-config --from-literal=client_id=${ocp_github_client_id} --from-literal=clientSecret=${ocp_github_client_secret}
-```
+ * Go to https://github.com/account/organizations/new?plan=free and create a new Github Personal Org"
+ * Fill the fields with:
+   * Organization Account Name: 'my-openshift-dev-team'
+   * Contact email: 'your email address'
+   * Check  'My personal account' for the Organization type
+
+![](./docs/images/new-gb-personal-org.png)
+
+> **IMPORTANT:** After creating your Personal Org, make sure you add members to it (including yourself)
+> Go to https://github.com/orgs/your-org-name/people and invite/add members
+
+![](./docs/images/gb-org-members.png)
+
+ * Now go to https://github.com/settings/applications/new and create a new GitHub app
+ * Fill the fields with:
+   * Application Name: `Red Hat Openshift oAuth provider`
+   * Homepage URL: `https://console-openshift-console.apps.cluster-domain.com/`
+   * Authorization callback URL: `https://oauth-openshift.apps.cluster-domain.com/oauth2callback/github`
+
+> **IMPORTANT:** <mark>Remember to copy the Client Id and the Client Secret values</mark>
+
+![](./docs/images/new-gb-ocp-oauth-app.png)
+
+## Configuring Github oAuth for DevSpaces
+
+ * Now go to https://github.com/settings/applications/new and create another GitHub app (now for DevSpaces)
+ * Fill the fields with:
+   * Application Name: `Openshift DevSpaces oAuth provider`
+   * Homepage URL: `https://devspaces.apps.cluster-domain.com/`
+   * Authorization callback URL: `https://devspaces.apps.cluster-domain.com/api/oauth/callback`
+
+> **IMPORTANT:** <mark>Remember to copy the Client Id and the Client Secret values</mark>
+
+![](./docs/images/new-gb-devspaces-oauth-app.png)
+
+## Applying the Github oAuth configuration to your Openshift cluster
+
+With the Github Org and oAuth Apps propertly created, now is time to apply the required configuration in your cluster. 
+
+**<mark>To make things easy I created a script to guide you in this configuration. Just execute the `bootstrap-scripts/setup-github-oauth.sh` and follow the instructions.</mark>**
