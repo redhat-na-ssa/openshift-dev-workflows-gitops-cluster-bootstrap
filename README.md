@@ -1,4 +1,4 @@
-# Openshift Gitops Cluster Bootstrap
+# Openshift Dev Workflows Gitops Cluster Bootstrap
 
 This project repo contains a set of ArgoCD manifests used to bootstrap a Openshift Cluster v4.x using GitOps approach. The produced environment is intended for Developer workflows demo.
 
@@ -104,6 +104,8 @@ To enable github users to authenticate on Openshift and DevSpaces using their Gi
 
 ## Applying the Github oAuth configuration to your Openshift cluster
 
-With the Github Org and oAuth Apps propertly created, now is time to apply the required configuration in your cluster. 
+With the Github Org and oAuth Apps properly created, now is time to apply the required configuration in your cluster. 
 
-**<mark>To make things easy I created a script to guide you in this configuration. Just execute the `bootstrap-scripts/setup-github-oauth.sh` and follow the instructions.</mark>**
+**To make things easy I created a script to guide you in this configuration. Just execute the `bootstrap-scripts/setup-github-oauth.sh` and follow the instructions.**
+
+> **NOTE:** After you create the github secrets the Patch Operator will catch the secret `ocp-github-app-credentials` (should be present in the `openshift-config` namespaces) and automatically configure the Cluster oAuth resource for you. In a couple of seconds you should be able to access the cluster using Github as an Identity Provider.
