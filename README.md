@@ -108,4 +108,8 @@ With the Github Org and oAuth Apps properly created, now is time to apply the re
 
 **To make things easy I created a script to guide you in this configuration. Just execute the `bootstrap-scripts/setup-github-oauth.sh` and follow the instructions.**
 
-> **NOTE:** After you create the github secrets the Patch Operator will catch the secret `ocp-github-app-credentials` (should be present in the `openshift-config` namespaces) and automatically configure the Cluster oAuth resource for you. In a couple of seconds you should be able to access the cluster using Github as an Identity Provider.
+> **NOTE:** After you create the github secrets the Patch Operator will catch the secret `ocp-github-app-credentials` (should be present in the `openshift-config` namespaces) and automatically configure the Cluster oAuth resource for you. 
+
+In a couple of seconds you should be able to access the cluster using Github as an Identity Provider.
+
+![](./docs/images/gb-oauth-openshift-console.png)
