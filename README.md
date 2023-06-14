@@ -33,7 +33,7 @@ oc apply -f ./openshift-gitops-install/operator.yaml
 
 #wait until the Gitops operators is ready
 oc wait pods -n openshift-operators -l control-plane=controller-manager --for condition=Ready
-oc create -f ./openshift-gitops-install/argocd.yaml
+oc apply -f ./openshift-gitops-install/argocd.yaml
 ```
 
  2. Apply additional `ClusterRoleBindings` to ArgoCD Controller Service Accounts
