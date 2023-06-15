@@ -17,6 +17,8 @@ spec:
     storage:
       pvcStrategy: per-workspace
   components:
+    pluginRegistry:
+      openVSXURL: 'https://open-vsx.org'
     cheServer:
       debug: false
       logLevel: INFO
