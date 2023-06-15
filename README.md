@@ -32,7 +32,7 @@ You can choose to install **Openshift GitOps** Operator manually from the Operat
 oc apply -f ./openshift-gitops-install/operator.yaml
 
 #wait until the Gitops operators is ready
-oc wait pods -n openshift-operators -l control-plane=controller-manager --for condition=Ready
+oc wait pods -n openshift-operators -l control-plane=controller-manager --for condition=Ready=false
 oc apply -f ./openshift-gitops-install/argocd.yaml
 ```
 
