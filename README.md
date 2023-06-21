@@ -26,13 +26,14 @@ This script will create the `admin` user as `cluster-admin` and 5 other regular 
 # Openshift GitOps installation
 You can choose to install **Openshift GitOps** Operator manually from the Operator Hub using the Openshift Console (Administrator Perspective) or you can
 
- 1. Authenticate as a `cluster-admin` on your cluster
+ 1. Authenticate as a `cluster-admin` on your cluster and execute
 
 ```shell
 oc apply -f ./openshift-gitops-install/operator.yaml
 
 #wait until the Gitops operators is ready
-oc wait pods -n openshift-operators -l control-plane=controller-manager --for condition=Ready=false
+oc wait pods -n openshift-operators -l control-plane=controller-manager --for condition=Ready
+#now create an argocd instance
 oc apply -f ./openshift-gitops-install/argocd.yaml
 ```
 
